@@ -1,9 +1,6 @@
-import type { NextConfig } from "next";
-import path from "path";
+﻿import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  outputFileTracingRoot: path.join(__dirname, "../../"),
   async rewrites() {
     const apiPort = process.env.API_PORT ?? "4100";
     return [

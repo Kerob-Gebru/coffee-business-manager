@@ -1,12 +1,14 @@
-import { spawn, spawnSync } from "node:child_process";
+﻿import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 
 const rootDir = process.cwd();
 const apiDir = path.join(rootDir, "apps/api");
 const webDir = path.join(rootDir, "apps/web");
 const apiEntry = path.join(apiDir, "dist/main.js");
-const nextBin = path.join(webDir, "node_modules/.bin/next");
+const requireFromWeb = createRequire(path.join(webDir, "package.json"));
+const nextBin = requireFromWeb.resolve("next/dist/bin/next");
 const isProd = process.argv.includes("--prod");
 const apiPort = process.env.API_PORT || "4100";
 const webPort = isProd ? process.env.PORT || "3000" : "3000";
@@ -55,7 +57,7 @@ const nextArgs = isProd
   ? ["start", "-p", webPort, "-H", "0.0.0.0"]
   : ["dev", "-p", webPort, "-H", "0.0.0.0"];
 
-const webChild = spawn(nextBin, nextArgs, {
+const webChild = spawn(process.execPath, [nextBin, ...nextArgs], {
   cwd: webDir,
   env: { ...process.env, API_PORT: apiPort, PORT: webPort },
   stdio: "inherit",
