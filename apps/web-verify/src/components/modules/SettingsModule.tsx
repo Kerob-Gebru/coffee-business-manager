@@ -1,0 +1,160 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { api, apiError } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import type { Company, SessionUser } from "@/lib/types";
+
+export default function SettingsModule({
+  user,
+  onNotice,
+  onCompanyChange,
+}: {
+  user: SessionUser | null;
+  onNotice: (message: string) => void;
+  onCompanyChange?: (company: Company) => void;
+}) {
+  const { t } = useTranslation();
+  const [company, setCompany] = useState<Company | null>(null);
+  const [companyName, setCompanyName] = useState("");
+  const [companyError, setCompanyError] = useState("");
+  const [companyBusy, setCompanyBusy] = useState(false);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordBusy, setPasswordBusy] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await api("/company");
+        if (response.ok) {
+          const data: Company = await response.json();
+          setCompany(data);
+          setCompanyName(data?.name ?? "");
+        }
+      } catch {
+        // The panel still renders with an empty name; saving will surface errors.
+      }
+    })();
+  }, []);
+
+  async function saveCompany(e: React.FormEvent) {
+    e.preventDefault();
+    setCompanyBusy(true);
+    setCompanyError("");
+    try {
+      const response = await api("/company", {
+        method: "PATCH",
+        body: JSON.stringify({ name: companyName.trim() }),
+      });
+      if (!response.ok) {
+        setCompanyError(await apiError(response, t("common.error")));
+        return;
+      }
+      const data: Company = await response.json();
+      setCompany(data);
+      onCompanyChange?.(data);
+      onNotice(t("settings.companyUpdated"));
+    } catch {
+      setCompanyError(t("common.error"));
+    } finally {
+      setCompanyBusy(false);
+    }
+  }
+
+  async function changePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      setPasswordError(t("settings.passwordMismatch"));
+      return;
+    }
+    setPasswordBusy(true);
+    setPasswordError("");
+    try {
+      const response = await api("/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      if (!response.ok) {
+        setPasswordError(await apiError(response, t("settings.passwordError")));
+        return;
+      }
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      onNotice(t("settings.passwordUpdated"));
+    } catch {
+      setPasswordError(t("settings.passwordError"));
+    } finally {
+      setPasswordBusy(false);
+    }
+  }
+
+  return (
+    <div className="settings-grid">
+      <section className="panel">
+        <div className="panel-head">
+          <div>
+            <h2>{t("settings.companyProfile")}</h2>
+            <p>{t("settings.subtitle")}</p>
+          </div>
+        </div>
+        <form onSubmit={saveCompany}>
+          <label>
+            {t("settings.companyName")}
+            <input
+              required
+              minLength={2}
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+            />
+          </label>
+          <div className="form-note">
+            {t("settings.workspaceId")}: #{user?.companyId ?? company?.id ?? "—"}
+          </div>
+          {companyError && <p className="error">{companyError}</p>}
+          <div className="modal-actions">
+            <button className="primary" disabled={companyBusy || companyName.trim().length < 2}>
+              {companyBusy ? t("common.loading") : t("settings.saveCompany")}
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div>
+            <h2>{t("settings.security")}</h2>
+            <p>
+              {t("settings.role")}: {user?.role ?? "—"}
+            </p>
+          </div>
+        </div>
+        <form onSubmit={changePassword}>
+          <label>
+            {t("settings.currentPassword")}
+            <input type="password" required value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+          </label>
+          <label>
+            {t("settings.newPassword")}
+            <input type="password" required minLength={10} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+          </label>
+          <label>
+            {t("settings.confirmPassword")}
+            <input type="password" required minLength={10} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          </label>
+          <div className="form-note">{t("settings.passwordHint")}</div>
+          {passwordError && <p className="error">{passwordError}</p>}
+          <div className="modal-actions">
+            <button className="primary" disabled={passwordBusy}>
+              {passwordBusy ? t("common.loading") : t("settings.changePassword")}
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  );
+}

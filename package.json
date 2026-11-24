@@ -1,0 +1,25 @@
+
+{
+  "name": "coffee-business-manager-and-cash-flow",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm --workspace @coffee/api run start:dev",
+    "dev:web": "npm --workspace @coffee/web run dev",
+    "build": "npm run build --workspace @coffee/api && npm run build --workspace @coffee/web",
+    "db:generate": "npm --workspace @coffee/api run db:generate",
+    "db:migrate": "npm --workspace @coffee/api run db:migrate",
+    "db:push": "npm --workspace @coffee/api run db:push",
+    "db:seed": "npm --workspace @coffee/api run db:seed",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3"
+  }
+}

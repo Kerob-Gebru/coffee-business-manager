@@ -1,0 +1,24 @@
+
+{
+  "name": "@coffee/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1 --port 3300",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1 --port 3300",
+    "test": "node --test test/calculator.test.mjs"
+  },
+  "dependencies": {
+    "@coffee/shared": "*",
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "lucide-react": "^0.468.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.9"
+  }
+}

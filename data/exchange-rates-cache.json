@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "latest": {
+    "rate": 163.82929899,
+    "date": "2026-11-23",
+    "source": "currency-api (fawazahmed0) via jsDelivr",
+    "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json",
+    "fetchedAt": "2026-11-24T07:14:17.984Z",
+    "provider": "currency-api"
+  },
+  "snapshots": {
+    "2026-11-20": {
+      "rate": 163.19781446,
+      "date": "2026-11-20",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T10:08:32.603Z",
+      "provider": "currency-api"
+    },
+    "2026-11-17": {
+      "rate": 163.79049647,
+      "date": "2026-11-17",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-11-17/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.986Z",
+      "provider": "currency-api"
+    },
+    "2026-11-14": {
+      "rate": 160.97567087,
+      "date": "2026-11-14",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-11-14/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.976Z",
+      "provider": "currency-api"
+    },
+    "2026-11-11": {
+      "rate": 161.31033369,
+      "date": "2026-11-11",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-11-11/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.975Z",
+      "provider": "currency-api"
+    },
+    "2026-11-08": {
+      "rate": 161.26996945,
+      "date": "2026-11-08",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-11-08/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.986Z",
+      "provider": "currency-api"
+    },
+    "2026-11-05": {
+      "rate": 162.80593561,
+      "date": "2026-11-05",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-11-05/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.976Z",
+      "provider": "currency-api"
+    },
+    "2026-11-02": {
+      "rate": 161.91384216,
+      "date": "2026-11-02",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-11-02/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.964Z",
+      "provider": "currency-api"
+    },
+    "2026-10-30": {
+      "rate": 161.29228793,
+      "date": "2026-10-30",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-10-30/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.977Z",
+      "provider": "currency-api"
+    },
+    "2026-10-27": {
+      "rate": 162.80517481,
+      "date": "2026-10-27",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-10-27/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.986Z",
+      "provider": "currency-api"
+    },
+    "2026-10-24": {
+      "rate": 162.48283182,
+      "date": "2026-10-24",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2026-10-24/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-21T01:57:38.977Z",
+      "provider": "currency-api"
+    },
+    "2026-11-23": {
+      "rate": 163.82929899,
+      "date": "2026-11-23",
+      "source": "currency-api (fawazahmed0) via jsDelivr",
+      "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json",
+      "fetchedAt": "2026-11-24T07:14:17.984Z",
+      "provider": "currency-api"
+    }
+  },
+  "overrides": {},
+  "historyFetchedAt": "2026-11-21T01:57:38.987Z"
+}
