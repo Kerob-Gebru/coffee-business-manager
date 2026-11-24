@@ -389,6 +389,20 @@ export interface Translations {
     signedOutOthers: string;
     sessionsError: string;
   };
+  profile: {
+    title: string;
+    name: string;
+    email: string;
+    role: string;
+    workspace: string;
+    accountSettings: string;
+    logout: string;
+    logoutConfirmTitle: string;
+    logoutAllConfirmTitle: string;
+    logoutAllConfirmDesc: string;
+    logMeOut: string;
+    stayLoggedIn: string;
+  };
   auth: {
     welcomeBack: string;
     signInSubtitle: string;

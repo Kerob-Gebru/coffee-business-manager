@@ -9,10 +9,12 @@ export default function SettingsModule({
   user,
   onNotice,
   onCompanyChange,
+  onRequestLogout,
 }: {
   user: SessionUser | null;
   onNotice: (message: string) => void;
   onCompanyChange?: (company: Company) => void;
+  onRequestLogout?: (mode: "current" | "all") => void;
 }) {
   const { t } = useTranslation();
   const [company, setCompany] = useState<Company | null>(null);
@@ -97,6 +99,10 @@ export default function SettingsModule({
   }
 
   async function signOutCurrent() {
+    if (onRequestLogout) {
+      onRequestLogout("current");
+      return;
+    }
     setSessionBusy("current");
     setSessionError("");
     try {
@@ -107,6 +113,10 @@ export default function SettingsModule({
   }
 
   async function signOutDevices(includeCurrent: boolean) {
+    if (includeCurrent && onRequestLogout) {
+      onRequestLogout("all");
+      return;
+    }
     setSessionBusy(includeCurrent ? "all" : "others");
     setSessionError("");
     try {

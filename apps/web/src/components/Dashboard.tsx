@@ -25,6 +25,8 @@ import {
   Receipt,
   Calculator,
   ArrowLeftRight,
+  ChevronRight,
+  User,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Language, TranslationKey } from "@/lib/i18n";
@@ -99,6 +101,9 @@ export default function Dashboard() {
   const [restoringContact, setRestoringContact] = useState<Contact | null>(null);
   const [contactTab, setContactTab] = useState<"active" | "archived">("active");
   const [showTx, setShowTx] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [logoutConfirmMode, setLogoutConfirmMode] = useState<"current" | "all" | null>(null);
+  const [logoutBusy, setLogoutBusy] = useState(false);
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
@@ -152,11 +157,39 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function logout() {
+  async function performLogout(mode: "current" | "all") {
+    setLogoutBusy(true);
     try {
-      await api("/auth/logout", { method: "POST" });
+      if (mode === "all") {
+        await api("/auth/logout-all", {
+          method: "POST",
+          body: JSON.stringify({ includeCurrent: true }),
+        });
+      } else {
+        await api("/auth/logout", { method: "POST" });
+      }
     } finally {
+      setLogoutBusy(false);
       window.location.href = "/login";
+    }
+  }
+
+  async function signOutOtherDevicesFromProfile() {
+    setLogoutBusy(true);
+    try {
+      const response = await api("/auth/logout-all", {
+        method: "POST",
+        body: JSON.stringify({ includeCurrent: false }),
+      });
+      if (response.ok) {
+        notify(t("settings.signedOutOthers"));
+      } else {
+        notify(t("settings.sessionsError"));
+      }
+    } catch {
+      notify(t("settings.sessionsError"));
+    } finally {
+      setLogoutBusy(false);
     }
   }
 
@@ -244,7 +277,11 @@ export default function Dashboard() {
             <span className="status-dot" />
             <span>{healthText}</span>
           </div>
-          <button className="nav-item" onClick={logout} title={t("nav.signOut")}>
+          <button
+            className="nav-item"
+            onClick={() => setLogoutConfirmMode("current")}
+            title={t("nav.signOut")}
+          >
             <LogOut size={18} />
             <span>{t("nav.signOut")}</span>
           </button>
@@ -280,16 +317,23 @@ export default function Dashboard() {
               {dark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
-            <div className="avatar">{user?.fullName?.slice(0, 1) || "A"}</div>
-
-            <div className="user-meta">
-              <strong>{user?.fullName || t("common.loading")}</strong>
-              <small>{user?.role || ""}</small>
-            </div>
+            <button
+              type="button"
+              className="profile-trigger"
+              onClick={() => setShowProfile(true)}
+              aria-label={t("profile.title")}
+              title={t("profile.title")}
+            >
+              <div className="avatar">{user?.fullName?.slice(0, 1) || "A"}</div>
+              <div className="user-meta">
+                <strong>{user?.fullName || t("common.loading")}</strong>
+                <small>{user?.role || ""}</small>
+              </div>
+            </button>
 
             <button
               className="icon-btn"
-              onClick={logout}
+              onClick={() => setLogoutConfirmMode("current")}
               aria-label={t("nav.signOut")}
               title={t("nav.signOut")}
             >
@@ -579,6 +623,7 @@ export default function Dashboard() {
               user={user}
               onNotice={notify}
               onCompanyChange={(company) => setCompanyName(company.name)}
+              onRequestLogout={(mode) => setLogoutConfirmMode(mode)}
             />
           )}
         </div>
@@ -637,6 +682,120 @@ export default function Dashboard() {
           }}
           t={t}
         />
+      )}
+
+      {showProfile && (
+        <Modal
+          title={t("profile.title")}
+          close={() => setShowProfile(false)}
+          closeAriaLabel={t("common.close")}
+        >
+          <div className="profile-header">
+            <div className="profile-avatar-lg">
+              {user?.fullName?.slice(0, 1) || <User size={22} />}
+            </div>
+            <div>
+              <strong>{user?.fullName || "—"}</strong>
+              <small>{companyName || t("common.workspace")}</small>
+            </div>
+          </div>
+
+          <div className="profile-info-card">
+            <div className="profile-info-row">
+              <span>{t("profile.name")}</span>
+              <strong>{user?.fullName || "—"}</strong>
+            </div>
+            <div className="profile-info-row">
+              <span>{t("profile.email")}</span>
+              <strong>{user?.email || "—"}</strong>
+            </div>
+            <div className="profile-info-row">
+              <span>{t("profile.role")}</span>
+              <strong style={{ textTransform: "capitalize" }}>{user?.role || "—"}</strong>
+            </div>
+            <div className="profile-info-row">
+              <span>{t("profile.workspace")}</span>
+              <strong>
+                {companyName || "—"} {user?.companyId ? `(#${user.companyId})` : ""}
+              </strong>
+            </div>
+          </div>
+
+          <div className="profile-menu">
+            <button
+              type="button"
+              className="profile-menu-btn"
+              onClick={() => {
+                setShowProfile(false);
+                setTab("Settings");
+              }}
+            >
+              <Settings size={17} />
+              <span>{t("profile.accountSettings")}</span>
+              <ChevronRight size={16} />
+            </button>
+            <button
+              type="button"
+              className="profile-menu-btn"
+              disabled={logoutBusy}
+              onClick={signOutOtherDevicesFromProfile}
+            >
+              <LogOut size={17} />
+              <span>{t("settings.signOutOtherDevices")}</span>
+              <ChevronRight size={16} />
+            </button>
+            <button
+              type="button"
+              className="profile-menu-btn danger"
+              onClick={() => {
+                setShowProfile(false);
+                setLogoutConfirmMode("current");
+              }}
+            >
+              <LogOut size={17} />
+              <span>{t("profile.logout")}</span>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {logoutConfirmMode && (
+        <div
+          className="modal-backdrop"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget && !logoutBusy) setLogoutConfirmMode(null);
+          }}
+        >
+          <div className="modal logout-confirm-box" role="dialog" aria-modal="true">
+            <h2>
+              {logoutConfirmMode === "all"
+                ? t("profile.logoutAllConfirmTitle")
+                : t("profile.logoutConfirmTitle")}
+            </h2>
+            {logoutConfirmMode === "all" && (
+              <p className="muted">{t("profile.logoutAllConfirmDesc")}</p>
+            )}
+            <div className="logout-confirm-actions">
+              <button
+                type="button"
+                className="secondary"
+                disabled={logoutBusy}
+                onClick={() => performLogout(logoutConfirmMode)}
+              >
+                {logoutBusy ? t("common.loading") : t("profile.logMeOut")}
+              </button>
+              <button
+                type="button"
+                className="primary"
+                disabled={logoutBusy}
+                onClick={() => setLogoutConfirmMode(null)}
+              >
+                {t("profile.stayLoggedIn")}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {notice && <div className="toast">{notice}</div>}

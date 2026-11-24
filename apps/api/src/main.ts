@@ -34,10 +34,52 @@ async function bootstrap() {
     credentials: true,
   });
 
+  function isHttpsRequest(req: any): boolean {
+    if (req.secure) return true;
+    const xfProto = String(req.headers["x-forwarded-proto"] || "")
+      .split(",")[0]
+      .trim()
+      .toLowerCase();
+    if (xfProto === "https") return true;
+    const origin = String(req.headers.origin || "");
+    const referer = String(req.headers.referer || "");
+    if (origin.startsWith("https://") || referer.startsWith("https://")) return true;
+    const host = String(req.headers["x-forwarded-host"] || req.headers.host || "")
+      .split(":")[0]
+      .trim();
+    return /\.run\.app$|\.onrender\.com$/i.test(host);
+  }
+
+  // Preserve HTTPS scheme across Next.js internal rewrite proxy and add CHIPS Partitioned attribute for HTTPS iframes
+  app.use((req: any, res: any, next: any) => {
+    const https = isHttpsRequest(req);
+    if (https) {
+      req.headers["x-forwarded-proto"] = "https";
+      const origSetHeader = res.setHeader.bind(res);
+      res.setHeader = (name: string, value: any) => {
+        if (typeof name === "string" && name.toLowerCase() === "set-cookie") {
+          const list = Array.isArray(value) ? value : [value];
+          const updated = list.map((item) => {
+            if (typeof item !== "string" || !item.startsWith("coffee.sid=")) return item;
+            let cookieStr = item.replace(/;\s*SameSite=Lax/gi, "; SameSite=None");
+            if (!/;\s*SameSite=/i.test(cookieStr)) cookieStr += "; SameSite=None";
+            if (!/;\s*Secure\b/i.test(cookieStr)) cookieStr += "; Secure";
+            if (!/;\s*Partitioned\b/i.test(cookieStr)) cookieStr += "; Partitioned";
+            return cookieStr;
+          });
+          return origSetHeader(name, Array.isArray(value) ? updated : updated[0]);
+        }
+        return origSetHeader(name, value);
+      };
+    }
+    next();
+  });
+
   // Session configuration
   app.use(
     session({
       name: "coffee.sid",
+      proxy: true,
       secret:
         process.env.SESSION_SECRET ??
         "development-only-change-this-secret-please",
@@ -54,8 +96,8 @@ async function bootstrap() {
 
   // Support cross-site HTTPS iframe preview cookies while keeping localhost HTTP working
   app.use((req: any, _res: any, next: any) => {
-    const isHttps = req.secure || req.headers["x-forwarded-proto"] === "https";
-    if (isHttps && req.session?.cookie && process.env.SESSION_COOKIE_SECURE !== "false") {
+    const isHttps = isHttpsRequest(req);
+    if (isHttps && req.session?.cookie) {
       req.session.cookie.secure = true;
       req.session.cookie.sameSite = "none";
     }
