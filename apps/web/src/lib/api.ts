@@ -1,4 +1,4 @@
-export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4100/api";
+export const API = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 export function api(path: string, init: RequestInit = {}): Promise<Response> {
   const headers = new Headers(init.headers);

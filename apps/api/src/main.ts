@@ -15,15 +15,22 @@ dotenv.config({
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Trust reverse proxy (required for Secure cookies behind AI Studio HTTPS proxy)
+  app.getHttpAdapter().getInstance().set("trust proxy", 1);
+
   // API global prefix
   app.setGlobalPrefix("api");
 
   // Allow requests from the frontend
+  const allowedOrigins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3300",
+    "http://127.0.0.1:3300",
+    ...(process.env.WEB_ORIGIN ? [process.env.WEB_ORIGIN] : []),
+  ];
   app.enableCors({
-    origin: [
-      "http://localhost:3300",
-      "http://127.0.0.1:3300",
-    ],
+    origin: allowedOrigins,
     credentials: true,
   });
 
@@ -45,13 +52,23 @@ async function bootstrap() {
     }),
   );
 
-  // Backend port
-  const port = Number(process.env.API_PORT ?? 4000);
+  // Support cross-site HTTPS iframe preview cookies while keeping localhost HTTP working
+  app.use((req: any, _res: any, next: any) => {
+    const isHttps = req.secure || req.headers["x-forwarded-proto"] === "https";
+    if (isHttps && req.session?.cookie && process.env.SESSION_COOKIE_SECURE !== "false") {
+      req.session.cookie.secure = true;
+      req.session.cookie.sameSite = "none";
+    }
+    next();
+  });
 
-  await app.listen(port);
+  // Backend port
+  const port = Number(process.env.API_PORT ?? 4100);
+
+  await app.listen(port, "127.0.0.1");
 
   console.log(
-    `Coffee Manager API listening on http://localhost:${port}/api`,
+    `Coffee Manager API listening on http://127.0.0.1:${port}/api`,
   );
 }
 
