@@ -9,6 +9,7 @@ const apiEntry = path.join(apiDir, "dist/main.js");
 const nextBin = path.join(webDir, "node_modules/.bin/next");
 const isProd = process.argv.includes("--prod");
 const apiPort = process.env.API_PORT || "4100";
+const webPort = isProd ? process.env.PORT || "3000" : "3000";
 
 if (!fs.existsSync(apiEntry)) {
   console.log("[dev] Building @coffee/api...");
@@ -51,12 +52,12 @@ const apiChild = spawn(process.execPath, [apiEntry], {
 children.push(apiChild);
 
 const nextArgs = isProd
-  ? ["start", "-p", "3000", "-H", "0.0.0.0"]
-  : ["dev", "-p", "3000", "-H", "0.0.0.0"];
+  ? ["start", "-p", webPort, "-H", "0.0.0.0"]
+  : ["dev", "-p", webPort, "-H", "0.0.0.0"];
 
 const webChild = spawn(nextBin, nextArgs, {
   cwd: webDir,
-  env: { ...process.env, API_PORT: apiPort, PORT: "3000" },
+  env: { ...process.env, API_PORT: apiPort, PORT: webPort },
   stdio: "inherit",
 });
 children.push(webChild);

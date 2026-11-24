@@ -17,21 +17,66 @@ let useMock = !hasExplicitDbConfig;
 let realPool: mysql.Pool | null = null;
 let realDb: MySql2Database<typeof schema> | null = null;
 
+function buildPoolFromEnv(): mysql.Pool {
+  const rawUri = process.env.DATABASE_URL;
+  if (rawUri) {
+    const parsed = new URL(rawUri);
+    const sslMode = (
+      parsed.searchParams.get("ssl-mode") ||
+      parsed.searchParams.get("sslmode") ||
+      ""
+    ).toLowerCase();
+    const wantsSsl =
+      process.env.DB_SSL === "true" ||
+      sslMode === "required" ||
+      sslMode === "verify_ca" ||
+      sslMode === "verify_identity" ||
+      parsed.searchParams.has("ssl") ||
+      /tidbcloud\.com|aivencloud\.com|psdb\.cloud|rds\.amazonaws\.com/i.test(parsed.hostname);
+
+    parsed.searchParams.delete("ssl-mode");
+    parsed.searchParams.delete("sslmode");
+    parsed.searchParams.delete("sslaccept");
+
+    return mysql.createPool({
+      uri: parsed.toString(),
+      waitForConnections: true,
+      connectionLimit: 10,
+      connectTimeout: 5000,
+      ...(wantsSsl
+        ? {
+            ssl: {
+              minVersion: "TLSv1.2",
+              rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false",
+            },
+          }
+        : {}),
+    });
+  }
+
+  return mysql.createPool({
+    host: process.env.DB_HOST ?? "localhost",
+    port: Number(process.env.DB_PORT ?? 3306),
+    user: process.env.DB_USER ?? "root",
+    password: process.env.DB_PASSWORD ?? "",
+    database: process.env.DB_NAME ?? "coffee_business_manager",
+    waitForConnections: true,
+    connectionLimit: 10,
+    connectTimeout: 5000,
+    ...(process.env.DB_SSL === "true"
+      ? {
+          ssl: {
+            minVersion: "TLSv1.2",
+            rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false",
+          },
+        }
+      : {}),
+  });
+}
+
 if (hasExplicitDbConfig) {
   try {
-    const uri = process.env.DATABASE_URL;
-    realPool = uri
-      ? mysql.createPool({ uri, waitForConnections: true, connectionLimit: 10, connectTimeout: 2000 })
-      : mysql.createPool({
-          host: process.env.DB_HOST ?? "localhost",
-          port: Number(process.env.DB_PORT ?? 3306),
-          user: process.env.DB_USER ?? "root",
-          password: process.env.DB_PASSWORD ?? "",
-          database: process.env.DB_NAME ?? "coffee_business_manager",
-          waitForConnections: true,
-          connectionLimit: 10,
-          connectTimeout: 2000,
-        });
+    realPool = buildPoolFromEnv();
     realDb = drizzle(realPool as any, { schema, mode: "default" }) as unknown as MySql2Database<typeof schema>;
     realPool.query("SELECT 1").catch((err) => {
       console.warn(`[AI Studio] MySQL unreachable (${err?.code || err?.message}) — switching to in-memory mock`);
