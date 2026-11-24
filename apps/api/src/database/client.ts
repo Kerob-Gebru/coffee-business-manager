@@ -1,5 +1,4 @@
-
-import dotenv from "dotenv";
+﻿import dotenv from "dotenv";
 import path from "path";
 import mysql from "mysql2/promise";
 import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
@@ -42,7 +41,8 @@ function buildPoolFromEnv(): mysql.Pool {
       uri: parsed.toString(),
       waitForConnections: true,
       connectionLimit: 10,
-      connectTimeout: 5000,
+      connectTimeout: 30000,
+      enableKeepAlive: true,
       ...(wantsSsl
         ? {
             ssl: {
@@ -62,7 +62,8 @@ function buildPoolFromEnv(): mysql.Pool {
     database: process.env.DB_NAME ?? "coffee_business_manager",
     waitForConnections: true,
     connectionLimit: 10,
-    connectTimeout: 5000,
+    connectTimeout: 30000,
+    enableKeepAlive: true,
     ...(process.env.DB_SSL === "true"
       ? {
           ssl: {
@@ -79,12 +80,20 @@ if (hasExplicitDbConfig) {
     realPool = buildPoolFromEnv();
     realDb = drizzle(realPool as any, { schema, mode: "default" }) as unknown as MySql2Database<typeof schema>;
     realPool.query("SELECT 1").catch((err) => {
-      console.warn(`[AI Studio] MySQL unreachable (${err?.code || err?.message}) — switching to in-memory mock`);
-      useMock = true;
+      if (process.env.NODE_ENV === "production") {
+        console.error(`[DB] MySQL connection check failed (${err?.code || err?.message})`);
+      } else {
+        console.warn(`[AI Studio] MySQL unreachable (${err?.code || err?.message}) — switching to in-memory mock`);
+        useMock = true;
+      }
     });
-  } catch {
-    console.warn("[AI Studio] Database initialization failed — using in-memory mock");
-    useMock = true;
+  } catch (err: any) {
+    if (process.env.NODE_ENV === "production") {
+      console.error(`[DB] Database initialization failed (${err?.message || err})`);
+    } else {
+      console.warn("[AI Studio] Database initialization failed — using in-memory mock");
+      useMock = true;
+    }
   }
 } else {
   console.warn("[AI Studio] No database configured — using in-memory mock (seeded admin@coffee.local / ChangeMe123!)");
