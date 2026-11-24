@@ -374,6 +374,13 @@ export const om: Translations = {
     role: "Gahee",
     workspaceId: "Eenyummaa Iddoo Hojii",
     passwordHint: "Yoo xiqqaate qubee 10, qubee fi lakkoofsa qabaachuu qaba.",
+    sessionsTitle: "Turmaatawwan hojii irra jiran",
+    sessionsDesc: "Meeshaa ykn biraawzarii biraa irratti seentee jirtaa? As irraa gadi bahi.",
+    signOutThisDevice: "Meeshaa kana irraa bahi",
+    signOutOtherDevices: "Meeshaalee biroo irraa bahi",
+    signOutAllDevices: "Meeshaalee hunda irraa bahi",
+    signedOutOthers: "Meeshaaleen biroo hundi bahaniiru.",
+    sessionsError: "Turmaatawwan haaromsuun hin danda'amne.",
   },
   auth: {
     welcomeBack: "Baga nagaan dhuftan",

@@ -6,9 +6,10 @@ import {
   Get,
   Post,
   Req,
+  Res,
   UnauthorizedException,
 } from "@nestjs/common";
-import type { Request } from "express";
+import type { Request, Response } from "express";
 import { and, eq, gt, isNull, lt } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { createHash, randomBytes } from "crypto";
@@ -44,6 +45,36 @@ function saveSession(req: Request): Promise<void> {
   return new Promise((resolve, reject) => {
     req.session.save((err) => (err ? reject(err) : resolve()));
   });
+}
+
+async function destroyUserSessions(
+  req: Request,
+  userId: number,
+  includeCurrent: boolean,
+): Promise<number> {
+  const store = req.sessionStore as {
+    all?: (cb: (err: unknown, obj?: Record<string, any> | any[] | null) => void) => void;
+    destroy: (sid: string, cb?: (err?: unknown) => void) => void;
+  };
+  if (!store?.all) return 0;
+  const allSessions = await new Promise<Record<string, any> | any[] | null>((resolve) => {
+    store.all!((err, obj) => resolve(err ? null : obj ?? null));
+  });
+  if (!allSessions) return 0;
+  const entries = Array.isArray(allSessions)
+    ? allSessions.map((s) => [s?.id, s] as const)
+    : Object.entries(allSessions);
+  let count = 0;
+  for (const [sid, sess] of entries) {
+    if (!sid || !sess) continue;
+    if (sess.user?.id !== userId) continue;
+    if (!includeCurrent && sid === req.sessionID) continue;
+    await new Promise<void>((resolve) => {
+      store.destroy(sid, () => resolve());
+    });
+    count += 1;
+  }
+  return count;
 }
 
 async function ensureRole(name: string, description: string): Promise<number> {
@@ -119,6 +150,7 @@ export class AuthController {
       role: "owner",
     };
     req.session.user = sessionUser;
+    req.session.issuedAt = Date.now();
     await saveSession(req);
 
     return {
@@ -171,6 +203,7 @@ export class AuthController {
       role: user.role ?? "staff",
     };
     req.session.user = sessionUser;
+    req.session.issuedAt = Date.now();
     await saveSession(req);
 
     return {
@@ -179,14 +212,61 @@ export class AuthController {
     };
   }
 
+  @Public()
   @Post("logout")
-  async logout(@Req() req: Request) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    res.clearCookie("coffee.sid");
+    if (!req.session) return { ok: true };
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {
         if (err) return reject(err);
         resolve({ ok: true });
       });
     });
+  }
+
+  @Post("logout-all")
+  async logoutAll(
+    @CurrentUser() user: SessionUser,
+    @Body() body: { includeCurrent?: boolean } | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const includeCurrent = body?.includeCurrent === true;
+    const revokedAt = new Date();
+
+    await db
+      .update(users)
+      .set({ passwordChangedAt: revokedAt })
+      .where(eq(users.id, user.id));
+
+    const revokedSessions = await destroyUserSessions(req, user.id, includeCurrent);
+
+    await writeAudit({
+      companyId: user.companyId,
+      userId: user.id,
+      action: "auth.logout_all",
+      entityType: "user",
+      entityId: user.id,
+      afterData: { includeCurrent, revokedSessions } as any,
+      reason: includeCurrent
+        ? "User signed out from all devices"
+        : "User signed out from all other devices",
+    });
+
+    if (includeCurrent) {
+      res.clearCookie("coffee.sid");
+      if (req.session) {
+        await new Promise<void>((resolve) => {
+          req.session.destroy(() => resolve());
+        });
+      }
+      return { ok: true, signedOutCurrent: true, revokedSessions };
+    }
+
+    req.session.issuedAt = Math.max(Date.now() + 1000, revokedAt.getTime() + 1000);
+    await saveSession(req);
+    return { ok: true, signedOutCurrent: false, revokedSessions };
   }
 
   @Get("me")
@@ -204,7 +284,11 @@ export class AuthController {
   }
 
   @Post("change-password")
-  async changePassword(@CurrentUser() user: SessionUser, @Body() body: unknown) {
+  async changePassword(
+    @CurrentUser() user: SessionUser,
+    @Body() body: unknown,
+    @Req() req: Request,
+  ) {
     const parsed = changePasswordSchema.safeParse(body);
     if (!parsed.success) throw new BadRequestException(firstError(parsed.error));
 
@@ -222,14 +306,19 @@ export class AuthController {
       throw new BadRequestException("New password must be different from the current password");
     }
 
+    const changedAt = new Date();
     await db
       .update(users)
       .set({
         passwordHash: await bcrypt.hash(parsed.data.newPassword, BCRYPT_COST),
         mustChangePassword: false,
-        passwordChangedAt: new Date(),
+        passwordChangedAt: changedAt,
       })
       .where(eq(users.id, user.id));
+
+    await destroyUserSessions(req, user.id, false);
+    req.session.issuedAt = Math.max(Date.now() + 1000, changedAt.getTime() + 1000);
+    await saveSession(req);
 
     await writeAudit({
       companyId: user.companyId,

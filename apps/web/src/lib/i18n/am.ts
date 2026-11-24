@@ -374,6 +374,13 @@ export const am: Translations = {
     role: "ሚና",
     workspaceId: "የስራ ቦታ መለያ",
     passwordHint: "ቢያንስ 10 ፊደሎች፣ ፊደላትና ቁጥሮች ያካትቱ።",
+    sessionsTitle: "ንቁ ክፍለ-ጊዜዎች",
+    sessionsDesc: "በሌላ መሣሪያ ወይም አሳሽ ገብተዋል? ከዚህ በታች ከሌሎች መሣሪያዎች ይውጡ።",
+    signOutThisDevice: "ከዚህ መሣሪያ ውጣ",
+    signOutOtherDevices: "ከሌሎች መሣሪያዎች ውጣ",
+    signOutAllDevices: "ከሁሉም መሣሪያዎች ውጣ",
+    signedOutOthers: "ሁሉም ሌሎች መሣሪያዎች ወጥተዋል።",
+    sessionsError: "ክፍለ-ጊዜዎችን ማዘመን አልተቻለም።",
   },
   auth: {
     welcomeBack: "እንኳን ደህና መጡ",

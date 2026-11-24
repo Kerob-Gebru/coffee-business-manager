@@ -374,6 +374,13 @@ export const en: Translations = {
     role: "Role",
     workspaceId: "Workspace ID",
     passwordHint: "At least 10 characters, with letters and numbers.",
+    sessionsTitle: "Active sessions",
+    sessionsDesc: "Signed in on another browser or device? Sign out remotely below.",
+    signOutThisDevice: "Sign out this device",
+    signOutOtherDevices: "Sign out other devices",
+    signOutAllDevices: "Sign out all devices",
+    signedOutOthers: "All other devices have been signed out.",
+    sessionsError: "Could not update active sessions.",
   },
   auth: {
     welcomeBack: "Welcome back",

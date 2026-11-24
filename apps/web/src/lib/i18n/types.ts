@@ -381,6 +381,13 @@ export interface Translations {
     role: string;
     workspaceId: string;
     passwordHint: string;
+    sessionsTitle: string;
+    sessionsDesc: string;
+    signOutThisDevice: string;
+    signOutOtherDevices: string;
+    signOutAllDevices: string;
+    signedOutOthers: string;
+    sessionsError: string;
   };
   auth: {
     welcomeBack: string;

@@ -153,8 +153,11 @@ export default function Dashboard() {
   }, []);
 
   async function logout() {
-    await api("/auth/logout", { method: "POST" });
-    window.location.href = "/login";
+    try {
+      await api("/auth/logout", { method: "POST" });
+    } finally {
+      window.location.href = "/login";
+    }
   }
 
   const currentNav = useMemo(() => NAV_ITEMS.find((n) => n.id === tab), [tab]);
@@ -241,8 +244,9 @@ export default function Dashboard() {
             <span className="status-dot" />
             <span>{healthText}</span>
           </div>
-          <button className="nav-item" onClick={logout}>
-            <LogOut size={18} /> {t("nav.signOut")}
+          <button className="nav-item" onClick={logout} title={t("nav.signOut")}>
+            <LogOut size={18} />
+            <span>{t("nav.signOut")}</span>
           </button>
         </div>
       </aside>
@@ -282,6 +286,15 @@ export default function Dashboard() {
               <strong>{user?.fullName || t("common.loading")}</strong>
               <small>{user?.role || ""}</small>
             </div>
+
+            <button
+              className="icon-btn"
+              onClick={logout}
+              aria-label={t("nav.signOut")}
+              title={t("nav.signOut")}
+            >
+              <LogOut size={18} />
+            </button>
           </div>
         </header>
 

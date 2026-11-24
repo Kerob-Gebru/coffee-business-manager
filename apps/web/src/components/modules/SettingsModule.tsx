@@ -26,6 +26,9 @@ export default function SettingsModule({
   const [passwordError, setPasswordError] = useState("");
   const [passwordBusy, setPasswordBusy] = useState(false);
 
+  const [sessionBusy, setSessionBusy] = useState<"current" | "others" | "all" | null>(null);
+  const [sessionError, setSessionError] = useState("");
+
   useEffect(() => {
     (async () => {
       try {
@@ -93,6 +96,40 @@ export default function SettingsModule({
     }
   }
 
+  async function signOutCurrent() {
+    setSessionBusy("current");
+    setSessionError("");
+    try {
+      await api("/auth/logout", { method: "POST" });
+    } finally {
+      window.location.href = "/login";
+    }
+  }
+
+  async function signOutDevices(includeCurrent: boolean) {
+    setSessionBusy(includeCurrent ? "all" : "others");
+    setSessionError("");
+    try {
+      const response = await api("/auth/logout-all", {
+        method: "POST",
+        body: JSON.stringify({ includeCurrent }),
+      });
+      if (!response.ok) {
+        setSessionError(await apiError(response, t("settings.sessionsError")));
+        return;
+      }
+      if (includeCurrent) {
+        window.location.href = "/login";
+        return;
+      }
+      onNotice(t("settings.signedOutOthers"));
+    } catch {
+      setSessionError(t("settings.sessionsError"));
+    } finally {
+      setSessionBusy(null);
+    }
+  }
+
   return (
     <div className="settings-grid">
       <section className="panel">
@@ -154,6 +191,42 @@ export default function SettingsModule({
             </button>
           </div>
         </form>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <div>
+            <h2>{t("settings.sessionsTitle")}</h2>
+            <p>{t("settings.sessionsDesc")}</p>
+          </div>
+        </div>
+        <div className="session-actions">
+          <button
+            type="button"
+            className="secondary"
+            disabled={sessionBusy !== null}
+            onClick={signOutCurrent}
+          >
+            {sessionBusy === "current" ? t("common.loading") : t("settings.signOutThisDevice")}
+          </button>
+          <button
+            type="button"
+            className="secondary"
+            disabled={sessionBusy !== null}
+            onClick={() => signOutDevices(false)}
+          >
+            {sessionBusy === "others" ? t("common.loading") : t("settings.signOutOtherDevices")}
+          </button>
+          <button
+            type="button"
+            className="danger-btn"
+            disabled={sessionBusy !== null}
+            onClick={() => signOutDevices(true)}
+          >
+            {sessionBusy === "all" ? t("common.loading") : t("settings.signOutAllDevices")}
+          </button>
+        </div>
+        {sessionError && <p className="error">{sessionError}</p>}
       </section>
     </div>
   );
