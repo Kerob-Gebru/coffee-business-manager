@@ -418,6 +418,15 @@ export interface Translations {
     signOutAllDevices: string;
     signedOutOthers: string;
     sessionsError: string;
+    deleteAccountTitle: string;
+    deleteAccountDesc: string;
+    deleteAccountWarning: string;
+    deleteAccountButton: string;
+    deleteAccountConfirmTitle: string;
+    deleteAccountConfirmDesc: string;
+    deleteAccountPasswordLabel: string;
+    deleteAccountConfirmButton: string;
+    deleteAccountError: string;
   };
   profile: {
     title: string;
@@ -426,6 +435,7 @@ export interface Translations {
     role: string;
     workspace: string;
     accountSettings: string;
+    deleteAccount: string;
     logout: string;
     logoutConfirmTitle: string;
     logoutAllConfirmTitle: string;
@@ -473,6 +483,7 @@ export interface Translations {
     resetDone: string;
     backToSignIn: string;
     resetFailed: string;
+    accountDeletedNotice: string;
   };
   modules: {
     moduleSuffix: string;

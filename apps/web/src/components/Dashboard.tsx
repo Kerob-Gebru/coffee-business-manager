@@ -27,6 +27,7 @@ import {
   Calculator,
   ArrowLeftRight,
   ChevronRight,
+  Trash2,
   User,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -34,6 +35,7 @@ import { Language, TranslationKey } from "@/lib/i18n";
 import { api, apiError } from "@/lib/api";
 import { fmtNumber } from "@/lib/format";
 import Modal from "@/components/Modal";
+import DeleteAccountModal from "@/components/DeleteAccountModal";
 import CoffeeTradeModule from "@/components/modules/CoffeeTradeModule";
 import ProcessingModule from "@/components/modules/ProcessingModule";
 import InventoryModule from "@/components/modules/InventoryModule";
@@ -106,6 +108,7 @@ export default function Dashboard() {
   const [contactTab, setContactTab] = useState<"active" | "archived">("active");
   const [showTx, setShowTx] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [logoutConfirmMode, setLogoutConfirmMode] = useState<"current" | "all" | null>(null);
   const [logoutBusy, setLogoutBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -769,8 +772,27 @@ export default function Dashboard() {
               <span>{t("profile.logout")}</span>
               <ChevronRight size={16} />
             </button>
+            <button
+              type="button"
+              className="profile-menu-btn danger-account"
+              onClick={() => {
+                setShowProfile(false);
+                setShowDeleteAccount(true);
+              }}
+            >
+              <Trash2 size={17} />
+              <span>{t("profile.deleteAccount")}</span>
+              <ChevronRight size={16} />
+            </button>
           </div>
         </Modal>
+      )}
+
+      {showDeleteAccount && (
+        <DeleteAccountModal
+          user={user}
+          close={() => setShowDeleteAccount(false)}
+        />
       )}
 
       {logoutConfirmMode && (

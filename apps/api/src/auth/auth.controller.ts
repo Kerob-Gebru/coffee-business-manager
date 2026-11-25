@@ -20,8 +20,10 @@ import { ALL_PERMISSIONS, can } from "../common/permissions";
 import { Public } from "../common/public.decorator";
 import { writeAudit } from "../common/tenant";
 import type { SessionUser } from "../common/session-user";
+import { shouldSuspendCompanyAfterUserDeletion } from "./account-deletion";
 import {
   changePasswordSchema,
+  deleteAccountSchema,
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
@@ -330,6 +332,80 @@ export class AuthController {
     });
 
     return { ok: true, message: "Password updated" };
+  }
+
+  @Post("delete-account")
+  async deleteAccount(
+    @CurrentUser() user: SessionUser,
+    @Body() body: unknown,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const parsed = deleteAccountSchema.safeParse(body);
+    if (!parsed.success) throw new BadRequestException(firstError(parsed.error));
+
+    const rows = await db
+      .select({
+        id: users.id,
+        companyId: users.companyId,
+        fullName: users.fullName,
+        email: users.email,
+        passwordHash: users.passwordHash,
+        isActive: users.isActive,
+      })
+      .from(users)
+      .where(eq(users.id, user.id))
+      .limit(1);
+    const row = rows[0];
+    if (!row || !row.isActive) {
+      throw new UnauthorizedException("Please sign in");
+    }
+
+    const matches = await bcrypt.compare(parsed.data.currentPassword, row.passwordHash);
+    if (!matches) {
+      throw new BadRequestException("Current password is incorrect");
+    }
+
+    await db.transaction(async (tx) => {
+      const companyUsers = await tx
+        .select({ id: users.id, isActive: users.isActive })
+        .from(users)
+        .where(eq(users.companyId, row.companyId));
+
+      await tx.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, row.id));
+      await tx.delete(users).where(eq(users.id, row.id));
+
+      if (shouldSuspendCompanyAfterUserDeletion(companyUsers, row.id)) {
+        await tx
+          .update(companies)
+          .set({ status: "suspended" })
+          .where(eq(companies.id, row.companyId));
+      }
+
+      await tx.insert(auditLogs).values({
+        companyId: row.companyId,
+        userId: null,
+        action: "auth.account_deleted",
+        entityType: "user",
+        entityId: String(row.id),
+        beforeData: {
+          email: row.email,
+          fullName: row.fullName,
+          role: user.role,
+        } as any,
+        reason: "User permanently deleted their account",
+      });
+    });
+
+    await destroyUserSessions(req, row.id, true);
+    res.clearCookie("coffee.sid");
+    if (req.session) {
+      await new Promise<void>((resolve) => {
+        req.session.destroy(() => resolve());
+      });
+    }
+
+    return { ok: true, message: "Account permanently deleted" };
   }
 
   @Public()

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Coffee } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Language } from "@/lib/i18n";
@@ -11,6 +11,16 @@ type Mode = "signIn" | "register" | "forgot";
 export default function LoginPage() {
   const { language, setLanguage, t, languages } = useTranslation();
   const [mode, setMode] = useState<Mode>("signIn");
+  const [accountDeleted, setAccountDeleted] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("deleted") === "1") {
+      setAccountDeleted(true);
+      window.history.replaceState({}, "", "/login");
+    }
+  }, []);
 
   return (
     <main className="login-wrap">
@@ -49,6 +59,10 @@ export default function LoginPage() {
             {t("auth.registerTab")}
           </button>
         </div>
+
+        {accountDeleted && mode === "signIn" && (
+          <div className="notice-success">{t("auth.accountDeletedNotice")}</div>
+        )}
 
         {mode === "signIn" && <SignInForm onForgot={() => setMode("forgot")} />}
         {mode === "register" && <RegisterForm onSignIn={() => setMode("signIn")} />}

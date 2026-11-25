@@ -5,7 +5,7 @@
     "date": "2026-11-24",
     "source": "currency-api (fawazahmed0) via jsDelivr",
     "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json",
-    "fetchedAt": "2026-11-25T13:48:29.193Z",
+    "fetchedAt": "2026-11-25T14:59:25.492Z",
     "provider": "currency-api"
   },
   "snapshots": {
@@ -102,7 +102,7 @@
       "date": "2026-11-24",
       "source": "currency-api (fawazahmed0) via jsDelivr",
       "sourceUrl": "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json",
-      "fetchedAt": "2026-11-25T13:48:29.193Z",
+      "fetchedAt": "2026-11-25T14:59:25.492Z",
       "provider": "currency-api"
     }
   },

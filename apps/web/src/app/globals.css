@@ -132,3 +132,9 @@
 .calendar-months-table{max-height:420px;overflow:auto}
 @media(max-width:1050px){.calendar-layout{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:720px){.calendar-today-grid,.calendar-eth-inputs,.calendar-meta-grid{grid-template-columns:1fr}.calendar-mode-bar{flex-direction:column;align-items:stretch}.calendar-mode-bar .filter-tabs{display:grid;grid-template-columns:1fr;width:100%}.calendar-mode-bar .filter-tab{justify-content:center;text-align:center}.calendar-result-head{flex-direction:column}}
+.danger-panel{border-color:rgba(201,77,77,.28)}
+.danger-note{display:flex;align-items:flex-start;gap:10px;background:rgba(201,77,77,.08);border:1px solid rgba(201,77,77,.2);border-radius:9px;padding:12px;color:#c94d4d;font-size:12px;line-height:1.5}
+.danger-note strong{display:block;margin-bottom:3px;color:var(--text)}
+.danger-note p{margin:0}
+.profile-menu-btn.danger-account{color:#c94d4d}
+.profile-menu-btn.danger-account:hover{background:rgba(201,77,77,.07)}

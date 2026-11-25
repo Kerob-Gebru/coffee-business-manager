@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AlertTriangle, Trash2 } from "lucide-react";
+import DeleteAccountModal from "@/components/DeleteAccountModal";
 import { api, apiError } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import type { Company, SessionUser } from "@/lib/types";
@@ -30,6 +32,7 @@ export default function SettingsModule({
 
   const [sessionBusy, setSessionBusy] = useState<"current" | "others" | "all" | null>(null);
   const [sessionError, setSessionError] = useState("");
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -238,6 +241,36 @@ export default function SettingsModule({
         </div>
         {sessionError && <p className="error">{sessionError}</p>}
       </section>
+
+      <section className="panel danger-panel">
+        <div className="panel-head">
+          <div>
+            <h2 className="danger-text">{t("settings.deleteAccountTitle")}</h2>
+            <p>{t("settings.deleteAccountDesc")}</p>
+          </div>
+        </div>
+        <div className="danger-note">
+          <AlertTriangle size={18} style={{ flexShrink: 0, marginTop: 1 }} />
+          <p>{t("settings.deleteAccountWarning")}</p>
+        </div>
+        <div className="modal-actions" style={{ marginTop: 14 }}>
+          <button
+            type="button"
+            className="danger-btn"
+            onClick={() => setShowDeleteAccount(true)}
+          >
+            <Trash2 size={15} />
+            {t("settings.deleteAccountButton")}
+          </button>
+        </div>
+      </section>
+
+      {showDeleteAccount && (
+        <DeleteAccountModal
+          user={user}
+          close={() => setShowDeleteAccount(false)}
+        />
+      )}
     </div>
   );
 }
