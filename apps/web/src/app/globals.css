@@ -105,3 +105,30 @@
 .sidebar::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
 .brand,.workspace-label,.sidebar-bottom{flex-shrink:0}
 .sidebar-bottom{padding-top:12px}
+.calendar-stack{display:grid;gap:18px}
+.calendar-stack>*,.calendar-layout>*{min-width:0}
+.calendar-stack .panel-head{flex-wrap:wrap;gap:10px}
+.calendar-today-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.calendar-ref-card{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:5px;min-width:0}
+.calendar-ref-card small{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700}
+.calendar-ref-card strong{font-family:Manrope,'Noto Sans Ethiopic',sans-serif;font-size:16px;font-weight:800;overflow-wrap:anywhere}
+.calendar-ref-card span{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.calendar-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:18px;align-items:start}
+.calendar-mode-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.calendar-mode-bar .filter-tabs{margin-bottom:0;max-width:100%}
+.calendar-form{display:grid;gap:14px;min-width:0}
+.calendar-form label{display:grid;gap:6px;font-size:12px;font-weight:700;min-width:0}
+.calendar-form input,.calendar-form select{width:100%;max-width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;padding:10px 11px;background:var(--surface-2);color:var(--text);outline-color:var(--primary)}
+.calendar-eth-inputs{display:grid;grid-template-columns:110px minmax(0,1fr) 110px;gap:12px}
+.calendar-result-card{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:14px;min-width:0}
+.calendar-result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.calendar-result-head small{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700}
+.calendar-result-head h3{font-family:Manrope,'Noto Sans Ethiopic',sans-serif;font-size:22px;font-weight:800;margin:4px 0;overflow-wrap:anywhere}
+.calendar-subline{margin:0;color:var(--primary);font-size:13px;font-weight:600;overflow-wrap:anywhere}
+.calendar-meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.calendar-meta-grid>div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 10px;display:grid;gap:3px;min-width:0}
+.calendar-meta-grid small{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.calendar-meta-grid strong{font-size:12px;overflow-wrap:anywhere}
+.calendar-months-table{max-height:420px;overflow:auto}
+@media(max-width:1050px){.calendar-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:720px){.calendar-today-grid,.calendar-eth-inputs,.calendar-meta-grid{grid-template-columns:1fr}.calendar-mode-bar{flex-direction:column;align-items:stretch}.calendar-mode-bar .filter-tabs{display:grid;grid-template-columns:1fr;width:100%}.calendar-mode-bar .filter-tab{justify-content:center;text-align:center}.calendar-result-head{flex-direction:column}}

@@ -6,6 +6,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Banknote,
+  Calendar,
   Coffee,
   LayoutDashboard,
   Users,
@@ -42,6 +43,7 @@ import InvoicesModule from "@/components/modules/InvoicesModule";
 import ReportsModule from "@/components/modules/ReportsModule";
 import SettingsModule from "@/components/modules/SettingsModule";
 import CalculatorModule from "@/components/modules/CalculatorModule";
+import CalendarModule from "@/components/modules/CalendarModule";
 import ExchangeRateModule from "@/components/modules/ExchangeRateModule";
 import ExchangeRateWidget from "@/components/modules/ExchangeRateWidget";
 import type { Contact, SessionUser, Tx } from "@/lib/types";
@@ -52,6 +54,7 @@ const NAV_ITEMS = [
   { id: "Finance", labelKey: "nav.finance", icon: Wallet },
   { id: "Invoices", labelKey: "nav.invoices", icon: Receipt },
   { id: "Calculator", labelKey: "nav.calculator", icon: Calculator },
+  { id: "Calendar", labelKey: "nav.calendar", icon: Calendar },
   { id: "Exchange Rate", labelKey: "nav.exchangeRate", icon: ArrowLeftRight },
   { id: "Coffee Trade", labelKey: "nav.coffeeTrade", icon: Coffee },
   { id: "Processing", labelKey: "nav.processing", icon: Activity },
@@ -68,6 +71,7 @@ const TAB_DESCRIPTIONS: Record<string, TranslationKey> = {
   Finance: "finance.subtitle",
   Invoices: "invoices.subtitle",
   Calculator: "calculator.subtitle",
+  Calendar: "calendar.subtitle",
   "Exchange Rate": "exchange.subtitle",
   "Coffee Trade": "modules.subtitleCoffee",
   Processing: "modules.subtitleProcessing",
@@ -446,6 +450,14 @@ export default function Dashboard() {
                     </span>
                     <Plus size={16} />
                   </button>
+                  <button onClick={() => setTab("Calendar")}>
+                    <Calendar size={18} />
+                    <span>
+                      <b>{t("dashboard.openCalendar")}</b>
+                      <small>{t("dashboard.openCalendarDesc")}</small>
+                    </span>
+                    <Plus size={16} />
+                  </button>
                   <button onClick={() => setTab("Exchange Rate")}>
                     <ArrowLeftRight size={18} />
                     <span>
@@ -606,6 +618,7 @@ export default function Dashboard() {
 
           {tab === "Invoices" && <InvoicesModule contacts={contacts} onNotice={notifyAndRefresh} />}
           {tab === "Calculator" && <CalculatorModule />}
+          {tab === "Calendar" && <CalendarModule />}
           {tab === "Exchange Rate" && (
             <ExchangeRateModule
               canOverride={permissions.includes("currency.override")}

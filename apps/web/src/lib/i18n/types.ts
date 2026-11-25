@@ -51,6 +51,7 @@ export interface Translations {
     finance: string;
     invoices: string;
     calculator: string;
+    calendar: string;
     exchangeRate: string;
     coffeeTrade: string;
     processing: string;
@@ -88,6 +89,8 @@ export interface Translations {
     openExchange: string;
     openCalculator: string;
     openCalculatorDesc: string;
+    openCalendar: string;
+    openCalendarDesc: string;
   };
   contacts: {
     title: string;
@@ -202,6 +205,33 @@ export interface Translations {
     useResult: string;
     invalidBusinessInput: string;
     enterAmountPrompt: string;
+  };
+  calendar: {
+    title: string;
+    subtitle: string;
+    todayReference: string;
+    gregorianDate: string;
+    ethiopianDate: string;
+    gregorianToEthiopian: string;
+    ethiopianToGregorian: string;
+    swap: string;
+    useToday: string;
+    year: string;
+    month: string;
+    day: string;
+    weekday: string;
+    result: string;
+    isoFormat: string;
+    leapYear: string;
+    regularYear: string;
+    invalidDate: string;
+    copy: string;
+    copied: string;
+    monthsTableTitle: string;
+    monthsTableDesc: string;
+    daysCount: string;
+    gregorianRange: string;
+    ecSuffix: string;
   };
   exchange: {
     title: string;
