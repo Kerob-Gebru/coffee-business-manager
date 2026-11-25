@@ -175,6 +175,13 @@ export type Vehicle = {
   vehicleType: string | null;
   driverContactId: number | null;
   driverName: string | null;
+  cargoItem: string | null;
+  cargoOwner: string | null;
+  cargoQuantity: string | null;
+  grossAmount: string;
+  costTaken: string;
+  netAmount: string;
+  currency: string;
   currentMileage: string;
   status: "active" | "maintenance" | "inactive";
   notes: string | null;

@@ -435,6 +435,13 @@ class MockStore {
       registrationNumber: "ET-3-48291",
       vehicleType: "Truck",
       driverContactId: driver.id,
+      driverName: "Dawit Tesfaye",
+      cargoItem: "Yirgacheffe Washed Coffee",
+      cargoOwner: "Kaffa Farmers Union",
+      cargoQuantity: "70 bags (4,200 kg)",
+      grossAmount: "85000.00",
+      costTaken: "14500.00",
+      currency: "ETB",
       currentMileage: "84210.0",
       status: "active",
     });

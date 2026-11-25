@@ -200,10 +200,17 @@ export const stockMovementSchema = z.object({
 });
 
 export const vehicleSchema = z.object({
-  name: z.string().trim().min(2, "Vehicle name must be at least 2 characters").max(100),
-  registrationNumber: z.string().trim().min(1, "Registration number is required").max(60),
+  name: optionalText(100),
+  registrationNumber: z.string().trim().min(1, "Registration / plate number is required").max(60),
   vehicleType: optionalText(60),
   driverContactId: z.coerce.number().int().positive().optional().nullable(),
+  driverName: optionalText(160),
+  cargoItem: optionalText(160),
+  cargoOwner: optionalText(160),
+  cargoQuantity: optionalText(80),
+  grossAmount: money.default("0"),
+  costTaken: money.default("0"),
+  currency: z.string().trim().length(3).default("ETB"),
   currentMileage: weight.default("0"),
   status: z.enum(["active", "maintenance", "inactive"]).default("active"),
   notes: optionalText(2000),

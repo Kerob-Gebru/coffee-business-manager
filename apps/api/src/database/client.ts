@@ -1,4 +1,4 @@
-﻿import dotenv from "dotenv";
+import dotenv from "dotenv";
 import path from "path";
 import mysql from "mysql2/promise";
 import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
@@ -109,6 +109,10 @@ export const pool: mysql.Pool = new Proxy(
     },
   },
 ) as unknown as mysql.Pool;
+
+export function isUsingMock(): boolean {
+  return useMock || !realPool;
+}
 
 export const db: MySql2Database<typeof schema> = new Proxy(
   {},

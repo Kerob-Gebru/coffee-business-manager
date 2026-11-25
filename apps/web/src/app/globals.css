@@ -85,3 +85,23 @@
 .spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:1050px){.calc-layout,.exchange-layout{grid-template-columns:1fr}.rate-widget-body{grid-template-columns:1fr}.rate-widget-actions{justify-content:flex-start}}
 @media(max-width:720px){.calc-value{font-size:28px}.calc-key{height:46px}.calc-fields,.calc-metrics,.rate-meta,.bank-grid{grid-template-columns:1fr}.converter-row{grid-template-columns:1fr;align-items:stretch}.swap-btn{justify-self:center;margin:0}.rate-hero{padding:13px}.history-actions{justify-content:flex-start}.rate-widget-top{flex-direction:column}}
+.form-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-grid-money{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 104px;gap:12px}
+.vehicle-stats{margin-bottom:16px}
+.vehicle-stats .stat-card{min-width:0}
+.vehicle-stats .stat-card>strong{font-size:21px;overflow-wrap:anywhere}
+.vehicles-table table{white-space:normal}
+.vehicles-table th{padding:10px 6px;white-space:normal;line-height:1.25}
+.vehicles-table td{padding:10px 6px;vertical-align:middle}
+.vehicles-table td.nowrap,.vehicles-table td.right,.vehicles-table td:last-child{white-space:nowrap}
+.vehicles-table .row-actions{gap:4px}
+.vehicles-table .action-btn{padding:0 6px;height:27px;gap:4px;font-size:11px}
+.vehicle-net-preview{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2)}
+.vehicle-net-preview span{font-size:12px;font-weight:700;color:var(--muted)}
+.vehicle-net-preview strong{font-family:Manrope,'Noto Sans Ethiopic',sans-serif;font-size:16px;font-weight:800}
+@media(max-width:720px){.form-grid-2,.form-grid-money{grid-template-columns:1fr}.vehicle-stats.stats-grid-3{grid-template-columns:1fr}.vehicle-panel-head{flex-direction:column;align-items:flex-start;gap:12px}.vehicle-panel-head .primary{width:auto}}
+.sidebar{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+.brand,.workspace-label,.sidebar-bottom{flex-shrink:0}
+.sidebar-bottom{padding-top:12px}
