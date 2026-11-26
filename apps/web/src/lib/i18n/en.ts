@@ -8,6 +8,7 @@ export const en: Translations = {
     workspaceUpper: "WORKSPACE",
     overview: "OVERVIEW",
     loading: "Loading…",
+    menu: "Menu",
     cancel: "Cancel",
     close: "Close",
     save: "Save",

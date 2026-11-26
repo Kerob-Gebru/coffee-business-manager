@@ -27,8 +27,10 @@ import {
   Calculator,
   ArrowLeftRight,
   ChevronRight,
+  Menu,
   Trash2,
   User,
+  X,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Language, TranslationKey } from "@/lib/i18n";
@@ -109,6 +111,7 @@ export default function Dashboard() {
   const [showTx, setShowTx] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [logoutConfirmMode, setLogoutConfirmMode] = useState<"current" | "all" | null>(null);
   const [logoutBusy, setLogoutBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -116,6 +119,15 @@ export default function Dashboard() {
   useEffect(() => {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
   }, [dark]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileNavOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mobileNavOpen]);
 
   function notify(message: string) {
     setNotice(message);
@@ -250,15 +262,33 @@ export default function Dashboard() {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      {mobileNavOpen && (
+        <div
+          className="drawer-backdrop"
+          onClick={() => setMobileNavOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside className={`sidebar ${mobileNavOpen ? "open" : ""}`}>
         <div className="brand">
-          <div className="brand-mark">
-            <Coffee size={22} />
+          <div className="brand-main">
+            <div className="brand-mark">
+              <Coffee size={22} />
+            </div>
+            <div>
+              <strong>{t("common.appName")}</strong>
+              <small>{t("common.appSubtitle")}</small>
+            </div>
           </div>
-          <div>
-            <strong>{t("common.appName")}</strong>
-            <small>{t("common.appSubtitle")}</small>
-          </div>
+          <button
+            type="button"
+            className="icon-btn drawer-close"
+            onClick={() => setMobileNavOpen(false)}
+            aria-label={t("common.close")}
+          >
+            <X size={18} />
+          </button>
         </div>
 
         <div className="workspace-label">{companyName || t("common.workspaceUpper")}</div>
@@ -270,6 +300,7 @@ export default function Dashboard() {
               className={`nav-item ${tab === n.id ? "active" : ""}`}
               onClick={() => {
                 setTab(n.id);
+                setMobileNavOpen(false);
                 if (n.id === "Dashboard" && user) load();
               }}
             >
@@ -286,7 +317,10 @@ export default function Dashboard() {
           </div>
           <button
             className="nav-item"
-            onClick={() => setLogoutConfirmMode("current")}
+            onClick={() => {
+              setMobileNavOpen(false);
+              setLogoutConfirmMode("current");
+            }}
             title={t("nav.signOut")}
           >
             <LogOut size={18} />
@@ -297,10 +331,21 @@ export default function Dashboard() {
 
       <main className="main">
         <header className="topbar">
-          <div className="crumb">
-            <span>{t("common.workspace")}</span>
-            <b>/</b>
-            <strong>{currentTabLabel}</strong>
+          <div className="topbar-left">
+            <button
+              type="button"
+              className="icon-btn mobile-menu-btn"
+              onClick={() => setMobileNavOpen(true)}
+              aria-label={t("common.menu")}
+              aria-expanded={mobileNavOpen}
+            >
+              <Menu size={18} />
+            </button>
+            <div className="crumb">
+              <span>{t("common.workspace")}</span>
+              <b>/</b>
+              <strong>{currentTabLabel}</strong>
+            </div>
           </div>
 
           <div className="top-actions">
@@ -339,7 +384,7 @@ export default function Dashboard() {
             </button>
 
             <button
-              className="icon-btn"
+              className="icon-btn topbar-logout-btn"
               onClick={() => setLogoutConfirmMode("current")}
               aria-label={t("nav.signOut")}
               title={t("nav.signOut")}

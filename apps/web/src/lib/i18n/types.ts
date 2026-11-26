@@ -15,6 +15,7 @@ export interface Translations {
     workspaceUpper: string;
     overview: string;
     loading: string;
+    menu: string;
     cancel: string;
     close: string;
     save: string;

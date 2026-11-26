@@ -8,6 +8,7 @@ export const om: Translations = {
     workspaceUpper: "IDDOO HOJII",
     overview: "WALIIGALA",
     loading: "Fe'amaa jira…",
+    menu: "Baafata",
     cancel: "Haqi",
     close: "Cufi",
     save: "Oolchi",

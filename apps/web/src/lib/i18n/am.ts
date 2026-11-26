@@ -8,6 +8,7 @@ export const am: Translations = {
     workspaceUpper: "የስራ ቦታ",
     overview: "አጠቃላይ እይታ",
     loading: "በመጫን ላይ…",
+    menu: "ምናሌ",
     cancel: "ሰርዝ",
     close: "ዝጋ",
     save: "አስቀምጥ",
