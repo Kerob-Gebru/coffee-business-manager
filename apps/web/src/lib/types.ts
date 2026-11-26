@@ -212,3 +212,45 @@ export type Employee = {
   contactName: string | null;
   createdAt: string;
 };
+
+export type CommodityCategory = "agricultural" | "metals" | "energy";
+
+export type CommodityHistoryPoint = {
+  date: string;
+  close: number;
+};
+
+export type CommodityQuote = {
+  id: string;
+  symbol: string;
+  category: CommodityCategory;
+  exchange: string;
+  quoteUnit: string;
+  price: number;
+  previousClose: number | null;
+  change: number | null;
+  changePercent: number | null;
+  monthChangePercent: number | null;
+  dayLow: number | null;
+  dayHigh: number | null;
+  week52Low: number | null;
+  week52High: number | null;
+  usdPerKg: number | null;
+  etbPerKg: number | null;
+  usdPerGram: number | null;
+  etbPerGram: number | null;
+  usdPrice: number;
+  etbPrice: number | null;
+  marketTime: string | null;
+  investingUrl: string;
+  history: CommodityHistoryPoint[];
+};
+
+export type MarketCommoditiesResponse = {
+  fetchedAt: string | null;
+  stale: boolean;
+  usdToEtbRate: number | null;
+  source: string;
+  items: CommodityQuote[];
+};
+

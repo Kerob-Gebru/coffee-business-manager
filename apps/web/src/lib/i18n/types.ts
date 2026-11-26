@@ -54,6 +54,7 @@ export interface Translations {
     calculator: string;
     calendar: string;
     exchangeRate: string;
+    marketWatch: string;
     coffeeTrade: string;
     processing: string;
     inventory: string;
@@ -92,6 +93,8 @@ export interface Translations {
     openCalculatorDesc: string;
     openCalendar: string;
     openCalendarDesc: string;
+    openMarketWatch: string;
+    openMarketWatchDesc: string;
   };
   contacts: {
     title: string;
@@ -296,6 +299,50 @@ export interface Translations {
     errorRefresh: string;
     marketRate: string;
     providerOffline: string;
+  };
+  market: {
+    title: string;
+    subtitle: string;
+    refresh: string;
+    refreshing: string;
+    all: string;
+    agricultural: string;
+    metals: string;
+    energy: string;
+    perKg: string;
+    perGram: string;
+    perBbl: string;
+    etbEquivalent: string;
+    dayRange: string;
+    week52Range: string;
+    prevClose: string;
+    monthChange: string;
+    dailyChange: string;
+    trend30d: string;
+    investingRef: string;
+    estimatorTitle: string;
+    estimatorDesc: string;
+    quantity: string;
+    estimatedUsd: string;
+    estimatedEtb: string;
+    staleNote: string;
+    unavailable: string;
+    lastUpdated: string;
+    usdEtbRateUsed: string;
+    exchangeLabel: string;
+    noItemsInCategory: string;
+    coffeeName: string;
+    coffeeDesc: string;
+    goldName: string;
+    goldDesc: string;
+    silverName: string;
+    silverDesc: string;
+    cocoaName: string;
+    cocoaDesc: string;
+    sugarName: string;
+    sugarDesc: string;
+    brentName: string;
+    brentDesc: string;
   };
   transactionKinds: {
     income: string;

@@ -14,6 +14,8 @@ import { InvoicesController } from "./invoices/invoices.controller";
 import { ReportsController } from "./reports/reports.controller";
 import { ExchangeRatesController } from "./currency/exchange-rates.controller";
 import { ExchangeRateService } from "./currency/exchange-rate.service";
+import { MarketController } from "./market/market.controller";
+import { MarketService } from "./market/market.service";
 import { AuthGuard } from "./common/auth.guard";
 
 @Module({
@@ -31,7 +33,8 @@ import { AuthGuard } from "./common/auth.guard";
     InvoicesController,
     ReportsController,
     ExchangeRatesController,
+    MarketController,
   ],
-  providers: [ExchangeRateService, { provide: APP_GUARD, useClass: AuthGuard }],
+  providers: [ExchangeRateService, MarketService, { provide: APP_GUARD, useClass: AuthGuard }],
 })
 export class AppModule {}

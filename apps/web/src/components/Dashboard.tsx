@@ -29,6 +29,7 @@ import {
   ChevronRight,
   Menu,
   Trash2,
+  TrendingUp,
   User,
   X,
 } from "lucide-react";
@@ -50,6 +51,7 @@ import CalculatorModule from "@/components/modules/CalculatorModule";
 import CalendarModule from "@/components/modules/CalendarModule";
 import ExchangeRateModule from "@/components/modules/ExchangeRateModule";
 import ExchangeRateWidget from "@/components/modules/ExchangeRateWidget";
+import MarketWatchModule from "@/components/modules/MarketWatchModule";
 import type { Contact, SessionUser, Tx } from "@/lib/types";
 
 const NAV_ITEMS = [
@@ -60,6 +62,7 @@ const NAV_ITEMS = [
   { id: "Calculator", labelKey: "nav.calculator", icon: Calculator },
   { id: "Calendar", labelKey: "nav.calendar", icon: Calendar },
   { id: "Exchange Rate", labelKey: "nav.exchangeRate", icon: ArrowLeftRight },
+  { id: "Market Watch", labelKey: "nav.marketWatch", icon: TrendingUp },
   { id: "Coffee Trade", labelKey: "nav.coffeeTrade", icon: Coffee },
   { id: "Processing", labelKey: "nav.processing", icon: Activity },
   { id: "Inventory", labelKey: "nav.inventory", icon: Package },
@@ -77,6 +80,7 @@ const TAB_DESCRIPTIONS: Record<string, TranslationKey> = {
   Calculator: "calculator.subtitle",
   Calendar: "calendar.subtitle",
   "Exchange Rate": "exchange.subtitle",
+  "Market Watch": "market.subtitle",
   "Coffee Trade": "modules.subtitleCoffee",
   Processing: "modules.subtitleProcessing",
   Inventory: "modules.subtitleInventory",
@@ -514,6 +518,14 @@ export default function Dashboard() {
                     </span>
                     <Plus size={16} />
                   </button>
+                  <button onClick={() => setTab("Market Watch")}>
+                    <TrendingUp size={18} />
+                    <span>
+                      <b>{t("dashboard.openMarketWatch")}</b>
+                      <small>{t("dashboard.openMarketWatchDesc")}</small>
+                    </span>
+                    <Plus size={16} />
+                  </button>
                   <div className="tip">
                     <b>{t("common.important")}</b>
                     <p>{t("dashboard.accountingTip")}</p>
@@ -673,6 +685,7 @@ export default function Dashboard() {
               onNotice={notify}
             />
           )}
+          {tab === "Market Watch" && <MarketWatchModule onNotice={notify} />}
           {tab === "Coffee Trade" && <CoffeeTradeModule contacts={contacts} onNotice={notify} />}
           {tab === "Processing" && <ProcessingModule onNotice={notify} />}
           {tab === "Inventory" && <InventoryModule onNotice={notify} />}
